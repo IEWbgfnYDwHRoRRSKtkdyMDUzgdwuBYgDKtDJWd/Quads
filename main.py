@@ -144,7 +144,6 @@ def main():
         value = depth[key]
         n = 4 ** key
         pct = 100.0 * value / n
-    print '             %8d %8.2f%%' % (len(model.quads), 100)
     # for max_depth in range(max(depth.keys()) + 1):
     #     model.render('out%d.png' % max_depth, max_depth)
 
