@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
 from collections import Counter
+import os
 import heapq
 import sys
 
@@ -8,7 +9,7 @@ MODE_ELLIPSE = 2
 MODE_ROUNDED_RECTANGLE = 3
 
 MODE = MODE_RECTANGLE
-ITERATIONS = 1024
+ITERATIONS = 2048
 LEAF_SIZE = 4
 PADDING = 1
 FILL_COLOR = (0, 0, 0)
@@ -138,14 +139,11 @@ def main():
             previous = error
         model.split()
     model.render('output.png')
-    print '-' * 32
     depth = Counter(x.depth for x in model.quads)
     for key in sorted(depth):
         value = depth[key]
         n = 4 ** key
         pct = 100.0 * value / n
-        print '%3d %8d %8d %8.2f%%' % (key, n, value, pct)
-    print '-' * 32
     print '             %8d %8.2f%%' % (len(model.quads), 100)
     # for max_depth in range(max(depth.keys()) + 1):
     #     model.render('out%d.png' % max_depth, max_depth)
