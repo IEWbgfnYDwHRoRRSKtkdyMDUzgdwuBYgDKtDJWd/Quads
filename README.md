@@ -14,11 +14,11 @@ http://www.michaelfogleman.com/static/quads/
 
 The first animation shows the natural iterative process of the algorithm.
 
-![Animation](http://i.imgur.com/UE2eOkx.gif)
+
 
 The second animation shows a top-down, breadth-first traversal of the final quadtree.
 
-![Animation](http://i.imgur.com/l3sv0In.gif)
+
 
 ### Samples
 
@@ -40,4 +40,3 @@ The second animation shows a top-down, breadth-first traversal of the final quad
 
 ![Fractal](http://i.imgur.com/WJmHRcV.png)
 
-![Mario](http://i.imgur.com/QvYyT3V.gif)
