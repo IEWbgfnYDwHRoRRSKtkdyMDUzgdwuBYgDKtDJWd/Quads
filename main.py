@@ -133,7 +133,6 @@ def main():
     for i in range(ITERATIONS):
         error = model.average_error()
         if previous is None or previous - error > ERROR_RATE:
-            print i, error
             if SAVE_FRAMES:
                 model.render('frames/%06d.png' % i)
             previous = error
