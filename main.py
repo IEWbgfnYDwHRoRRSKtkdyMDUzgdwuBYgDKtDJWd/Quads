@@ -4,8 +4,8 @@ import os
 import heapq
 import sys
 
-#1 OR 0 FOR Y/N
-NOFILL = 1
+#0 = NOFILL 1=FILL 2=OUTPUT BOTH
+FILL = 2
 
 MODE_RECTANGLE = 1
 MODE_ELLIPSE = 2
@@ -109,7 +109,8 @@ class Model(object):
         for child in children:
             self.push(child)
             self.error_sum += child.error * child.area
-    def render(self, path, max_depth=None):
+     
+    def renderfill(self, path, max_depth=None):
         m = int(OUTPUT_SCALE)
         dx, dy = (PADDING, PADDING)
         im = Image.new('RGB', (self.width * m + dx, self.height * m + dy))
@@ -118,22 +119,32 @@ class Model(object):
         for quad in self.root.get_leaf_nodes(max_depth):
             l, t, r, b = quad.box
             box = (l * m + dx, t * m + dy, r * m - 1, b * m - 1)
-            if NOFILL == 1:
-              if MODE == MODE_ELLIPSE:
-                  draw.ellipse(box, FILLIN_COLOR)
-              elif MODE == MODE_ROUNDED_RECTANGLE:
-                  radius = m * min((r - l), (b - t)) / 4
-                  rounded_rectangle(draw, box, radius, FILLIN_COLOR)
-              else:
-                  draw.rectangle(box, FILLIN_COLOR)
+            if MODE == MODE_ELLIPSE:
+              draw.ellipse(box, quad.color)
+            elif MODE == MODE_ROUNDED_RECTANGLE:
+              radius = m * min((r - l), (b - t)) / 4
+              rounded_rectangle(draw, box, radius, quad.color)
             else:
-              if MODE == MODE_ELLIPSE:
-                  draw.ellipse(box, quad.color)
-              elif MODE == MODE_ROUNDED_RECTANGLE:
-                  radius = m * min((r - l), (b - t)) / 4
-                  rounded_rectangle(draw, box, radius, quad.color)
-              else:
-                  draw.rectangle(box, quad.color)
+              draw.rectangle(box, quad.color)
+        del draw
+        im.save(path, 'PNG')
+
+    def rendernofill(self, path, max_depth=None):
+        m = int(OUTPUT_SCALE)
+        dx, dy = (PADDING, PADDING)
+        im = Image.new('RGB', (self.width * m + dx, self.height * m + dy))
+        draw = ImageDraw.Draw(im)
+        draw.rectangle((0, 0, self.width * m, self.height * m), FILL_COLOR)
+        for quad in self.root.get_leaf_nodes(max_depth):
+            l, t, r, b = quad.box
+            box = (l * m + dx, t * m + dy, r * m - 1, b * m - 1)
+            if MODE == MODE_ELLIPSE:
+              draw.ellipse(box, FILLIN_COLOR)
+            elif MODE == MODE_ROUNDED_RECTANGLE:
+              radius = m * min((r - l), (b - t)) / 4
+              rounded_rectangle(draw, box, radius, FILLIN_COLOR)
+            else:
+              draw.rectangle(box, FILLIN_COLOR)
         del draw
         im.save(path, 'PNG')
 
@@ -151,7 +162,13 @@ def main():
                 model.render('frames/%06d.png' % i)
             previous = error
         model.split()
-    model.render('output.png')
+    if FILL == 0:
+      model.rendernofill('output_no_fill.png')
+    if FILL == 1:
+      model.renderfill('output_fill.png')
+    if FILL == 2:
+      model.rendernofill('output_no_fill.png')
+      model.renderfill('output_fill.png')
     depth = Counter(x.depth for x in model.quads)
     for key in sorted(depth):
         value = depth[key]
